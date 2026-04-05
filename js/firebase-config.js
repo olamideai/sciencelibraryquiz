@@ -1,4 +1,4 @@
-// Firebase Configuration - Using your provided API
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBoYdFQ1jKVUO0H0QrJpgWN-wMnwoervgU",
     authDomain: "sciencelibraryquiz.firebaseapp.com",
@@ -9,18 +9,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-// Export references
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// Admin PIN (stored here for client-side admin access verification)
-// In production, this should be verified via Cloud Function
-const ADMIN_PIN = '123456'; // Change this to your 6-digit PIN
+// Admin PIN (set to 123456 as default)
+const ADMIN_PIN = '123456';
 
-// Collection references
+// Database collections
 const collections = {
     users: db.collection('users'),
     scores: db.collection('scores'),
@@ -33,14 +33,17 @@ const collections = {
     counters: db.collection('counters')
 };
 
-// Enable offline persistence
-db.enablePersistence({ synchronizeTabs: true })
-    .catch(err => {
-        if (err.code === 'failed-precondition') {
-            console.log('Persistence failed: Multiple tabs open');
-        } else if (err.code === 'unimplemented') {
-            console.log('Persistence not supported');
-        }
-    });
+// Enable persistence for offline use
+db.enablePersistence().catch((err) => {
+    if (err.code === 'failed-precondition') {
+        console.warn('Persistence failed: Multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+        console.warn('Persistence not supported');
+    }
+});
 
-console.log('Firebase initialized successfully');
+window.auth = auth;
+window.db = db;
+window.storage = storage;
+window.collections = collections;
+window.ADMIN_PIN = ADMIN_PIN;

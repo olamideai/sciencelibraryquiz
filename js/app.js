@@ -7,15 +7,9 @@ const app = {
         'friends', 'leaderboard', 'admin'
     ],
 
-    // Initialize app
+    // Initialize App
     init() {
-        // Check for hash route
-        const hash = window.location.hash.replace('#', '');
-        if (hash && this.sections.includes(hash)) {
-            this.navigate(hash, false);
-        }
-        
-        // Listen for hash changes
+        // Hash Routing Listener
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
             if (hash && this.sections.includes(hash)) {
@@ -23,28 +17,34 @@ const app = {
             }
         });
 
-        // Initialize auth
-        auth.init();
+        // Initial Route
+        const hash = window.location.hash.replace('#', '');
+        if (hash && this.sections.includes(hash)) {
+            this.navigate(hash, false);
+        } else {
+            this.navigate('auth');
+        }
+
+        // Initialize Auth
+        authModule.init();
     },
 
-    // Navigate to section
+    // SPA Navigation
     navigate(section, updateHash = true) {
-        // Hide all sections
+        // Hide All Sections
         this.sections.forEach(s => {
-            const el = document.getElementById(`${s}-section`) || 
-                      document.getElementById(s);
+            const el = document.getElementById(`${s}-section`) || document.getElementById(s);
             if (el) el.classList.add('hidden');
         });
 
-        // Show target section
-        const target = document.getElementById(`${section}-section`) || 
-                      document.getElementById(section);
+        // Show Target Section
+        const target = document.getElementById(`${section}-section`) || document.getElementById(section);
         if (target) {
             target.classList.remove('hidden');
             target.classList.add('active');
         }
 
-        // Update nav active state
+        // Update Nav Link Active State
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('onclick')?.includes(section)) {
@@ -52,7 +52,7 @@ const app = {
             }
         });
 
-        // Show/hide nav based on section
+        // Navigation Bar Logic
         const nav = document.getElementById('main-nav');
         const noNavSections = ['auth', 'verify', 'legend-entrance', 'quiz'];
         
@@ -62,18 +62,18 @@ const app = {
             nav.classList.remove('hidden');
         }
 
-        // Update hash
+        // Update Hash
         if (updateHash) {
             window.location.hash = section;
         }
 
         this.currentSection = section;
 
-        // Section-specific initialization
+        // Section Specific Initialization
         this.initSection(section);
     },
 
-    // Initialize section-specific content
+    // Init Specific Content
     initSection(section) {
         switch(section) {
             case 'home':
@@ -97,15 +97,15 @@ const app = {
         }
     },
 
-    // Load home content
+    // Load Home Content
     async loadHome() {
-        if (!auth.userData) return;
+        if (!authModule.userData) return;
 
-        const data = auth.userData;
+        const data = authModule.userData;
         const rank = utils.calculateRank(data.totalQuizzes || 0);
 
-        // Update stats
-        document.getElementById('welcome-name').textContent = `Welcome, ${data.name}!`;
+        // UI Updates
+        document.getElementById('welcome-name').textContent = `Welcome back, ${data.name}!`;
         document.getElementById('rank-badge').textContent = `${rank.badge} ${rank.name}`;
         document.getElementById('total-quizzes').textContent = data.totalQuizzes || 0;
         document.getElementById('total-points').textContent = data.totalPoints || 0;
@@ -113,46 +113,19 @@ const app = {
         document.getElementById('nav-streak').textContent = `🔥 ${data.currentStreak || 0}`;
         document.getElementById('nav-points').textContent = `⭐ ${data.totalPoints || 0}`;
 
-        // Calculate average score
-        this.loadAverageScore();
-
-        // Load subjects
+        // Load Subject Cards
         this.loadHomeSubjects();
 
-        // Apply theme
+        // Apply Global Rank Theme
         document.body.className = rank.theme;
     },
 
-    // Calculate and display average score
-    async loadAverageScore() {
-        try {
-            const snapshot = await collections.scores
-                .where('userId', '==', auth.currentUser.uid)
-                .get();
-            
-            if (snapshot.empty) {
-                document.getElementById('avg-score').textContent = '0%';
-                return;
-            }
-
-            let total = 0;
-            snapshot.forEach(doc => {
-                total += doc.data().score;
-            });
-            
-            const avg = Math.round(total / snapshot.size);
-            document.getElementById('avg-score').textContent = `${avg}%`;
-        } catch (error) {
-            console.error('Error loading average:', error);
-        }
-    },
-
-    // Load subjects on home
+    // Load Subject Cards
     async loadHomeSubjects() {
         const container = document.getElementById('home-subjects');
         container.innerHTML = '';
 
-        const subjects = ['mathematics', 'chemistry', 'physics', 'biology', 'agriculture', 'computer', 'furthermath'];
+        const subjects = ['mathematics', 'chemistry', 'physics', 'biology', 'astronomy'];
         
         for (const subject of subjects) {
             try {
@@ -162,8 +135,8 @@ const app = {
                 const card = document.createElement('div');
                 card.className = `subject-card ${settings.locked ? 'locked' : ''}`;
                 card.innerHTML = `
-                    <img src="images/${subject}.png" alt="${utils.getSubjectName(subject)}">
-                    <span>${utils.getSubjectName(subject)}</span>
+                    <img src="images/${subject}.png" alt="${subject}">
+                    <span>${subject.charAt(0).toUpperCase() + subject.slice(1)}</span>
                     ${settings.locked ? '🔒' : ''}
                 `;
                 
@@ -176,37 +149,35 @@ const app = {
                 
                 container.appendChild(card);
             } catch (error) {
-                console.error(`Error loading subject ${subject}:`, error);
+                console.error(`Error loading ${subject}:`, error);
             }
         }
     },
 
-    // Show signup form
+    // Signup form toggle
     showSignup() {
         document.getElementById('login-form').classList.add('hidden');
         document.getElementById('signup-form').classList.remove('hidden');
     },
 
-    // Show login form
+    // Login form toggle
     showLogin() {
         document.getElementById('signup-form').classList.add('hidden');
         document.getElementById('login-form').classList.remove('hidden');
     },
 
-    // Enter app from legend entrance
+    // Legend entrance logic
     enterApp() {
         utils.storage.set('legend_seen', true);
         utils.createConfetti();
         this.navigate('home');
     },
 
-    // Update navigation based on user
+    // Navigation bar visibility update
     updateNav() {
-        if (!auth.userData) return;
-        
-        // Show admin link if user is admin
+        if (!authModule.userData) return;
         const adminLink = document.getElementById('admin-link');
-        if (auth.userData.isAdmin) {
+        if (authModule.userData.isAdmin) {
             adminLink.classList.remove('hidden');
         } else {
             adminLink.classList.add('hidden');
@@ -216,17 +187,14 @@ const app = {
 
 // Modal helper
 const modal = {
-    open(id) {
-        document.getElementById(id).classList.remove('hidden');
-    },
-    
-    close(id) {
-        document.getElementById(id).classList.add('hidden');
-    }
+    open(id) { document.getElementById(id).classList.remove('hidden'); },
+    close(id) { document.getElementById(id).classList.add('hidden'); }
 };
 
-// Initialize when DOM is ready
+window.app = app;
+window.modal = modal;
+
+// Initialize on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
-

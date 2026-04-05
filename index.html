@@ -18,6 +18,24 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
+    <!-- ==================== MAIN NAVIGATION ==================== -->
+    <nav id="main-nav" class="main-nav hidden">
+        <div class="nav-brand">🔬 SLQ</div>
+        <div class="nav-links">
+            <a onclick="app.navigate('home')" class="nav-link active">Home</a>
+            <a onclick="app.navigate('achievements')" class="nav-link">Achievements</a>
+            <a onclick="app.navigate('friends')" class="nav-link">Friends</a>
+            <a onclick="app.navigate('leaderboard')" class="nav-link">Leaderboard</a>
+            <a onclick="app.navigate('profile')" class="nav-link">Profile</a>
+            <a id="admin-link" onclick="app.navigate('admin')" class="nav-link hidden">Admin</a>
+        </div>
+        <div class="nav-user">
+            <span id="nav-streak">🔥 0</span>
+            <span id="nav-points">⭐ 0</span>
+            <button onclick="auth.logout()" class="btn-icon" title="Logout">🚪</button>
+        </div>
+    </nav>
+
     <!-- ==================== AUTH SECTION ==================== -->
     <section id="auth-section" class="section active">
         <div class="auth-container">
@@ -105,6 +123,535 @@
         </div>
     </section>
 
+    <!-- ==================== VERIFY SECTION ==================== -->
+    <section id="verify-section" class="section">
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>Verify Your Email</h2>
+                <p>We've sent a verification email to <strong id="verify-email"></strong></p>
+                <p>Please check your inbox and click the link to continue.</p>
+
+                <button onclick="auth.checkVerification()" class="btn-primary">I've Verified</button>
+                <button onclick="auth.resendVerification()" class="btn-secondary">Resend Email</button>
+                <button onclick="auth.logout()" class="btn-text">Back to Login</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== LEGEND ENTRANCE ==================== -->
+    <section id="legend-entrance-section" class="section">
+        <div class="results-card legend-entrance">
+            <div class="logo-icon">👑</div>
+            <h1 class="gradient-text">Welcome, Legend!</h1>
+            <p>You have reached the highest rank in Science Library Quiz.</p>
+            <p>Your dedication to science is truly remarkable.</p>
+            <button onclick="app.enterApp()" class="btn-primary btn-large">Enter the Hall of Fame</button>
+        </div>
+    </section>
+
+    <!-- ==================== HOME SECTION ==================== -->
+    <section id="home-section" class="section">
+        <div class="container">
+            <div class="stats-card">
+                <div id="rank-badge" class="rank-badge">⭐ Novice</div>
+                <h2 id="welcome-name">Welcome back!</h2>
+
+                <div class="stats-grid">
+                    <div class="stat">
+                        <span id="total-quizzes" class="stat-value">0</span>
+                        <span class="stat-label">Quizzes</span>
+                    </div>
+                    <div class="stat">
+                        <span id="total-points" class="stat-value">0</span>
+                        <span class="stat-label">Points</span>
+                    </div>
+                    <div class="stat">
+                        <span id="current-streak" class="stat-value">0 🔥</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span id="avg-score" class="stat-value">0%</span>
+                        <span class="stat-label">Avg. Score</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Select a Subject</h3>
+            <div id="home-subjects" class="subjects-grid">
+                <!-- Subjects loaded by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== QUIZ SETUP ==================== -->
+    <section id="quiz-setup" class="section">
+        <div class="container">
+            <div class="setup-step">
+                <h3>Step 1: Choose Difficulty</h3>
+                <div id="difficulty-step" class="difficulty-options">
+                    <button class="difficulty-btn" data-difficulty="Easy" onclick="quiz.selectDifficulty('Easy')">
+                        <strong>Easy</strong>
+                        <span>Perfect for learning the basics</span>
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="Medium" onclick="quiz.selectDifficulty('Medium')">
+                        <strong>Medium</strong>
+                        <span>Challenge your knowledge</span>
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="Hard" onclick="quiz.selectDifficulty('Hard')">
+                        <strong>Hard</strong>
+                        <span>Only for true science enthusiasts</span>
+                    </button>
+                    <button id="expert-btn" class="difficulty-btn" data-difficulty="Expert" onclick="quiz.selectDifficulty('Expert')">
+                        <strong>Expert</strong>
+                        <span>The ultimate challenge</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="start-step" class="setup-step hidden">
+                <h3>Step 2: Review Quiz Settings</h3>
+                <div id="quiz-summary" class="quiz-summary">
+                    <!-- Loaded by JS -->
+                </div>
+                <button onclick="quiz.start()" class="btn-primary btn-large">Start Quiz</button>
+                <button onclick="quiz.resetSetup()" class="btn-text">Reset</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== QUIZ INTERFACE ==================== -->
+    <section id="quiz" class="section">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h2 id="quiz-subject">Mathematics</h2>
+                    <span id="quiz-difficulty">Medium</span>
+                </div>
+                <div id="quiz-timer" class="quiz-timer">30:00</div>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-header">
+                    <span>Question <span id="question-number">1</span> of <span id="total-questions">15</span></span>
+                </div>
+                <h3 id="question-text">Loading question...</h3>
+
+                <div id="options-grid" class="options-grid">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+
+            <div class="quiz-controls">
+                <button id="prev-btn" onclick="quiz.previous()" class="btn-secondary hidden">Previous</button>
+                <button id="next-btn" onclick="quiz.next()" class="btn-primary">Next</button>
+                <button id="submit-btn" onclick="quiz.submit()" class="btn-success hidden">Submit Quiz</button>
+            </div>
+
+            <button onclick="quiz.confirmExit()" class="btn-text btn-exit">Exit Quiz</button>
+        </div>
+    </section>
+
+    <!-- ==================== RESULTS SECTION ==================== -->
+    <section id="results" class="section">
+        <div class="results-card">
+            <h1>Quiz Completed!</h1>
+
+            <div class="score-display">
+                <div class="score-circle">
+                    <span id="score-percent">0%</span>
+                </div>
+                <h2 id="score-message">Good job!</h2>
+            </div>
+
+            <div class="results-details">
+                <div class="detail-row">
+                    <span>Correct Answers:</span>
+                    <span id="correct-count">0/0</span>
+                </div>
+                <div class="detail-row">
+                    <span>Time Taken:</span>
+                    <span id="time-taken">00:00</span>
+                </div>
+                <div class="detail-row">
+                    <span>Base Score:</span>
+                    <span id="base-score">0</span>
+                </div>
+                <div class="detail-row">
+                    <span>Difficulty Bonus:</span>
+                    <span id="difficulty-bonus">0</span>
+                </div>
+                <div class="detail-row">
+                    <span>Streak Bonus:</span>
+                    <span id="streak-bonus">0</span>
+                </div>
+                <div class="detail-row highlight">
+                    <span>Total Points Earned:</span>
+                    <span id="total-earned">0</span>
+                </div>
+            </div>
+
+            <div id="new-achievements" class="new-achievements hidden">
+                <h3>New Achievements Unlocked!</h3>
+                <div id="achievements-list"></div>
+            </div>
+
+            <div class="results-actions">
+                <button onclick="app.navigate('home')" class="btn-primary">Back to Home</button>
+                <button onclick="app.navigate('review')" class="btn-secondary">Review Answers</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== REVIEW SECTION ==================== -->
+    <section id="review" class="section">
+        <div class="container">
+            <div class="review-header-card">
+                <h1>Review Answers</h1>
+                <button onclick="app.navigate('results')" class="btn-secondary">Back to Results</button>
+            </div>
+            <div id="review-list">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PROFILE SECTION ==================== -->
+    <section id="profile" class="section">
+        <div class="container">
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-info">
+                    <h2 id="profile-name">Username</h2>
+                    <span id="profile-regid" class="profile-regid">SLQ-2024-001</span>
+                    <div id="profile-rank" class="rank-display">⭐ Novice</div>
+                </div>
+            </div>
+
+            <div class="stats-grid detailed">
+                <div class="stat">
+                    <span id="profile-quizzes" class="stat-value">0</span>
+                    <span class="stat-label">Quizzes Taken</span>
+                </div>
+                <div class="stat">
+                    <span id="profile-avg" class="stat-value">0%</span>
+                    <span class="stat-label">Average Score</span>
+                </div>
+                <div class="stat">
+                    <span id="profile-points" class="stat-value">0</span>
+                    <span class="stat-label">Total Points</span>
+                </div>
+                <div class="stat">
+                    <span id="profile-streak" class="stat-value">0</span>
+                    <span class="stat-label">Current Streak</span>
+                </div>
+                <div class="stat">
+                    <span id="profile-best-streak" class="stat-value">0</span>
+                    <span class="stat-label">Best Streak</span>
+                </div>
+                <div class="stat">
+                    <span id="profile-perfect" class="stat-value">0</span>
+                    <span class="stat-label">Perfect Scores</span>
+                </div>
+            </div>
+
+            <div class="subject-mastery">
+                <h3>Subject Mastery</h3>
+                <div id="mastery-list">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+
+            <div class="quiz-history">
+                <h3>Recent Activity</h3>
+                <div id="history-list">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+
+            <div class="profile-settings">
+                <h3>Settings</h3>
+                <div class="setting-row">
+                    <span>App Theme</span>
+                    <select id="theme-select" onchange="user.changeTheme(this.value)">
+                        <option value="dark">Dark Mode</option>
+                        <option value="light">Light Mode</option>
+                        <option value="auto">System Default</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ACHIEVEMENTS SECTION ==================== -->
+    <section id="achievements" class="section">
+        <div class="container">
+            <div class="achievements-summary">
+                <h2 id="achievements-count">0/0 Unlocked</h2>
+                <span id="achievement-points" class="stat-value">0 pts</span>
+            </div>
+            <div id="achievements-grid" class="achievements-grid">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FRIENDS SECTION ==================== -->
+    <section id="friends" class="section">
+        <div class="container">
+            <div class="add-friend">
+                <input type="text" id="friend-search" placeholder="Enter RegID or Email">
+                <button onclick="friends.search()" class="btn-primary">Add Friend</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="friends.showTab('friends')">Friends</button>
+                <button class="tab-btn" onclick="friends.showTab('requests')">
+                    Requests <span id="request-count" class="badge">0</span>
+                </button>
+                <button class="tab-btn" onclick="friends.showTab('challenges')">
+                    Challenges <span id="challenge-count" class="badge">0</span>
+                </button>
+            </div>
+
+            <div id="friends-tab" class="tab-content active">
+                <div id="friends-list"></div>
+            </div>
+
+            <div id="requests-tab" class="tab-content">
+                <div id="requests-list"></div>
+            </div>
+
+            <div id="challenges-tab" class="tab-content">
+                <div id="challenges-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== LEADERBOARD SECTION ==================== -->
+    <section id="leaderboard" class="section">
+        <div class="container">
+            <div class="leaderboard-filters">
+                <select id="leaderboard-type" onchange="leaderboard.load()">
+                    <option value="global">Global</option>
+                    <option value="friends">Friends</option>
+                </select>
+                <select id="leaderboard-subject" onchange="leaderboard.load()">
+                    <option value="all">All Subjects</option>
+                    <option value="mathematics">Mathematics</option>
+                    <option value="chemistry">Chemistry</option>
+                    <option value="physics">Physics</option>
+                    <option value="biology">Biology</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="computer">Computer</option>
+                    <option value="furthermath">Further Math</option>
+                </select>
+            </div>
+
+            <div id="podium" class="podium">
+                <!-- Loaded by JS -->
+            </div>
+
+            <div id="leaderboard-list" class="leaderboard-list">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ADMIN SECTION ==================== -->
+    <section id="admin" class="section">
+        <div class="container">
+            <div id="admin-login" class="admin-login">
+                <h2>Admin Access</h2>
+                <p>Please enter your security PIN</p>
+                <input type="password" id="admin-pin" maxlength="6" placeholder="******">
+                <p id="admin-error" class="error-text"></p>
+                <button onclick="admin.login()" class="btn-primary">Verify PIN</button>
+            </div>
+
+            <div id="admin-dashboard" class="hidden">
+                <div class="admin-stats">
+                    <div class="admin-card">
+                        <span id="admin-users" class="admin-number">0</span>
+                        <span>Total Users</span>
+                    </div>
+                    <div class="admin-card">
+                        <span id="admin-today" class="admin-number">0</span>
+                        <span>Quizzes Today</span>
+                    </div>
+                    <div class="admin-card">
+                        <span id="admin-masters" class="admin-number">0</span>
+                        <span>Masters</span>
+                    </div>
+                    <div class="admin-card">
+                        <span id="admin-legends" class="admin-number">0</span>
+                        <span>Legends</span>
+                    </div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="admin.showTab('subjects')">Subjects</button>
+                    <button class="tab-btn" onclick="admin.showTab('questions')">Questions</button>
+                    <button class="tab-btn" onclick="admin.showTab('users')">Users</button>
+                    <button class="tab-btn" onclick="admin.showTab('settings')">Settings</button>
+                </div>
+
+                <div id="admin-subjects" class="admin-tab active">
+                    <div id="admin-subjects-list"></div>
+                </div>
+
+                <div id="admin-questions" class="admin-tab">
+                    <button onclick="admin.showAddQuestion()" class="btn-primary" style="margin-bottom: 20px;">Add New Question</button>
+                    <div id="admin-questions-list"></div>
+                </div>
+
+                <div id="admin-users" class="admin-tab">
+                    <div class="input-group">
+                        <input type="text" id="user-search" placeholder="Search by Email or RegID">
+                        <button onclick="admin.searchUsers()" class="btn-primary">Search</button>
+                    </div>
+                    <div id="admin-users-list"></div>
+                </div>
+
+                <div id="admin-settings" class="admin-tab">
+                    <div class="subject-settings-card">
+                        <h3>Global Configuration</h3>
+                        <div class="settings-row">
+                            <span>Questions per Quiz</span>
+                            <input type="number" id="setting-questions" value="15">
+                        </div>
+                        <div class="settings-row">
+                            <span>Time Limit (min)</span>
+                            <input type="number" id="setting-time" value="30">
+                        </div>
+                        <div class="settings-row">
+                            <span>Pass Percentage</span>
+                            <input type="number" id="setting-pass" value="60">
+                        </div>
+                        <div class="settings-row">
+                            <span>Registration Open</span>
+                            <input type="checkbox" id="setting-registration" checked>
+                        </div>
+                        <div class="settings-row">
+                            <span>Email Verification Required</span>
+                            <input type="checkbox" id="setting-verification" checked>
+                        </div>
+                        <button onclick="admin.saveSettings()" class="btn-primary" style="margin-top: 20px;">Save Global Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MODALS ==================== -->
+    <!-- Exit Quiz Confirmation -->
+    <div id="exit-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Exit Quiz?</h3>
+            <p>Are you sure you want to exit? Your progress for this quiz will be lost.</p>
+            <div class="modal-actions">
+                <button onclick="modal.close('exit-modal')" class="btn-secondary">Resume</button>
+                <button onclick="quiz.exit()" class="btn-danger">Exit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Modal -->
+    <div id="challenge-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Challenge Friend</h3>
+            <div class="input-group">
+                <label>Friend</label>
+                <select id="challenge-friend"></select>
+            </div>
+            <div class="input-group">
+                <label>Subject</label>
+                <select id="challenge-subject">
+                    <option value="mathematics">Mathematics</option>
+                    <option value="chemistry">Chemistry</option>
+                    <option value="physics">Physics</option>
+                    <option value="biology">Biology</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="computer">Computer</option>
+                    <option value="furthermath">Further Math</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Difficulty</label>
+                <select id="challenge-difficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button onclick="modal.close('challenge-modal')" class="btn-secondary">Cancel</button>
+                <button onclick="friends.sendChallenge()" class="btn-primary">Send Challenge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Question Modal -->
+    <div id="question-modal" class="modal hidden">
+        <div class="modal-content large">
+            <h3 id="question-modal-title">Add New Question</h3>
+            <form id="question-form" onsubmit="admin.saveQuestion(event)">
+                <div class="input-group">
+                    <label>Subject</label>
+                    <select id="q-subject" required>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="physics">Physics</option>
+                        <option value="biology">Biology</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="computer">Computer</option>
+                        <option value="furthermath">Further Math</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Difficulty</label>
+                    <select id="q-difficulty" required>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Question Text</label>
+                    <textarea id="q-text" required placeholder="Enter the question..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Options</label>
+                    <input type="text" id="q-option1" placeholder="Option A" required>
+                    <input type="text" id="q-option2" placeholder="Option B" required>
+                    <input type="text" id="q-option3" placeholder="Option C" required>
+                    <input type="text" id="q-option4" placeholder="Option D" required>
+                </div>
+                <div class="input-group">
+                    <label>Correct Answer</label>
+                    <select id="q-correct" required>
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Explanation</label>
+                    <textarea id="q-explanation" placeholder="Explain why this is the correct answer..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="modal.close('question-modal')" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Question</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ==================== SCRIPTS ==================== -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -115,6 +662,12 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/friends.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

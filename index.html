@@ -6,115 +6,259 @@
     <title>Science Library Quiz</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay hidden">
         <div class="spinner"></div>
-        <p>Loading...</p>
     </div>
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- ==================== AUTH SECTION ==================== -->
-    <section id="auth-section" class="section active">
-        <div class="auth-container">
-            <div class="logo">
-                <div class="logo-icon">🔬</div>
-                <h1>Science Library Quiz</h1>
-                <p>Master the sciences, one quiz at a time</p>
-            </div>
-            
-            <!-- Login Form -->
-            <div id="login-form" class="auth-form">
-                <h2>Welcome Back</h2>
-                <p class="auth-subtitle">Sign in to continue your learning journey</p>
-                
-                <div class="input-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" placeholder="Enter your email" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="login-password">Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-password" placeholder="Enter your password" required>
-                        <button type="button" class="toggle-password" onclick="auth.togglePassword('login-password', this)">
-                            👁️
-                        </button>
-                    </div>
-                </div>
-                
-                <button onclick="auth.login()" class="btn-primary btn-auth" id="login-btn">
-                    <span class="btn-text">Login</span>
-                    <span class="btn-spinner hidden"></span>
-                </button>
-                
-                <div class="auth-links">
-                    <p>Don't have an account? <a onclick="app.showSignup()" class="auth-link">Sign up</a></p>
-                    <a onclick="auth.resetPassword()" class="auth-link forgot-link">Forgot password?</a>
-                </div>
-            </div>
+    <!-- Main Navigation -->
+    <nav id="main-nav" class="main-nav hidden">
+        <div class="nav-brand">🔬 SLQ</div>
+        <div class="nav-links">
+            <a onclick="app.navigate('home')" class="nav-link">Home</a>
+            <a onclick="app.navigate('leaderboard')" class="nav-link">Leaderboard</a>
+            <a onclick="app.navigate('friends')" class="nav-link">Friends</a>
+            <a onclick="app.navigate('achievements')" class="nav-link">Badges</a>
+            <a onclick="app.navigate('profile')" class="nav-link">Profile</a>
+            <a id="admin-link" onclick="app.navigate('admin-login')" class="nav-link hidden">Admin</a>
+        </div>
+        <div class="nav-user">
+            <span id="nav-streak">🔥 0</span>
+            <span id="nav-points">⭐ 0</span>
+            <button onclick="authModule.logout()" class="btn-secondary">Logout</button>
+        </div>
+    </nav>
 
-            <!-- Signup Form -->
-            <div id="signup-form" class="auth-form hidden">
-                <h2>Create Account</h2>
-                <p class="auth-subtitle">Join thousands of science learners</p>
-                
+    <!-- Sections -->
+
+    <!-- Auth Section -->
+    <section id="auth-section" class="section">
+        <div class="auth-container">
+            <div id="login-form">
+                <h2>Login</h2>
                 <div class="input-group">
-                    <label for="signup-name">Full Name</label>
-                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                    <label>Email</label>
+                    <input type="email" id="login-email">
                 </div>
-                
                 <div class="input-group">
-                    <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" placeholder="Enter your email address" required>
+                    <label>Password</label>
+                    <input type="password" id="login-password">
                 </div>
-                
+                <button onclick="authModule.login()" class="btn-primary">Login</button>
+                <p>No account? <a onclick="app.showSignup()">Sign up</a></p>
+            </div>
+            <div id="signup-form" class="hidden">
+                <h2>Sign Up</h2>
                 <div class="input-group">
-                    <label for="signup-password">Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="signup-password" placeholder="Create a password (min 6 chars)" required>
-                        <button type="button" class="toggle-password" onclick="auth.togglePassword('signup-password', this)">
-                            👁️
-                        </button>
-                    </div>
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name">
                 </div>
-                
                 <div class="input-group">
-                    <label for="signup-confirm">Confirm Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="signup-confirm" placeholder="Confirm your password" required>
-                        <button type="button" class="toggle-password" onclick="auth.togglePassword('signup-confirm', this)">
-                            👁️
-                        </button>
-                    </div>
+                    <label>Email</label>
+                    <input type="email" id="signup-email">
                 </div>
-                
-                <button onclick="auth.signup()" class="btn-primary btn-auth" id="signup-btn">
-                    <span class="btn-text">Create Account</span>
-                    <span class="btn-spinner hidden"></span>
-                </button>
-                
-                <div class="auth-links">
-                    <p>Already have an account? <a onclick="app.showLogin()" class="auth-link">Login</a></p>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password">
                 </div>
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm">
+                </div>
+                <button onclick="authModule.signup()" class="btn-primary">Create Account</button>
+                <p>Already have an account? <a onclick="app.showLogin()">Login</a></p>
             </div>
         </div>
     </section>
 
-    <!-- ==================== SCRIPTS ==================== -->
+    <!-- Verify Email Section -->
+    <section id="verify-section" class="section hidden">
+        <div class="auth-container">
+            <h2>Verify Email</h2>
+            <p>Verification link sent to <span id="verify-email"></span></p>
+            <button onclick="location.reload()" class="btn-primary">I've Verified</button>
+        </div>
+    </section>
+
+    <!-- Home Section -->
+    <section id="home-section" class="section hidden">
+        <div class="container">
+            <div class="welcome-banner">
+                <div id="rank-badge" class="rank-badge">⭐ Novice</div>
+                <h1 id="welcome-name">Welcome!</h1>
+                <div class="quick-stats">
+                    <div class="stat">Quizzes: <span id="total-quizzes">0</span></div>
+                    <div class="stat">Points: <span id="total-points">0</span></div>
+                    <div class="stat">Streak: <span id="current-streak">0 🔥</span></div>
+                </div>
+            </div>
+            <h3>Select a Subject</h3>
+            <div id="home-subjects" class="subjects-grid"></div>
+        </div>
+    </section>
+
+    <!-- Quiz Setup Section -->
+    <section id="quiz-setup-section" class="section hidden">
+        <div class="container">
+            <h2>Quiz Setup</h2>
+            <div id="difficulty-step" class="hidden">
+                <h3>Select Difficulty</h3>
+                <div class="difficulty-options">
+                    <button onclick="quiz.selectDifficulty('Easy')" class="btn-secondary">Easy</button>
+                    <button onclick="quiz.selectDifficulty('Medium')" class="btn-secondary">Medium</button>
+                    <button onclick="quiz.selectDifficulty('Hard')" class="btn-secondary">Hard</button>
+                    <button onclick="quiz.selectDifficulty('Expert')" class="btn-secondary">Expert</button>
+                </div>
+            </div>
+            <div id="start-step" class="hidden">
+                <div id="quiz-summary"></div>
+                <button onclick="quiz.start()" class="btn-primary">Start Quiz</button>
+                <button onclick="quiz.resetSetup()" class="btn-secondary">Back</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz-section" class="section hidden">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h2 id="quiz-subject">Subject</h2>
+                <div id="quiz-timer">30:00</div>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="question-container">
+                <p>Question <span id="question-number">1</span></p>
+                <h3 id="question-text">Loading...</h3>
+                <div id="options-grid" class="options-grid"></div>
+            </div>
+            <div class="quiz-controls">
+                <button id="prev-btn" onclick="quiz.previous()" class="btn-secondary hidden">Previous</button>
+                <button id="next-btn" onclick="quiz.next()" class="btn-secondary">Next</button>
+                <button id="submit-btn" onclick="quiz.submit()" class="btn-primary hidden">Submit Quiz</button>
+            </div>
+            <button onclick="quiz.confirmExit()" class="btn-secondary" style="margin-top: 20px;">Exit</button>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="section hidden">
+        <div class="container text-center">
+            <h1>Quiz Completed!</h1>
+            <div class="score-display">
+                <h2 id="score-percent">0%</h2>
+                <p>Correct: <span id="correct-count">0</span></p>
+                <p>Time: <span id="time-taken">00:00</span></p>
+            </div>
+            <button onclick="app.navigate('home')" class="btn-primary">Back Home</button>
+            <button onclick="app.navigate('review')" class="btn-secondary">Review Answers</button>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile-section" class="section hidden">
+        <div class="container">
+            <div class="profile-header">
+                <h2 id="profile-name">Name</h2>
+                <p id="profile-regid"></p>
+                <div id="profile-rank" class="rank-badge"></div>
+            </div>
+            <div class="profile-stats">
+                <p>Total Points: <span id="profile-points"></span></p>
+                <p>Quizzes Completed: <span id="profile-quizzes"></span></p>
+            </div>
+            <button onclick="exportModule.toCSV()" class="btn-secondary">Export Scores (CSV)</button>
+            <h3>Recent History</h3>
+            <div id="history-list"></div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section id="achievements-section" class="section hidden">
+        <div class="container">
+            <h2 id="achievements-count">0/0 Unlocked</h2>
+            <div id="achievements-grid" class="subjects-grid"></div>
+        </div>
+    </section>
+
+    <!-- Friends Section -->
+    <section id="friends-section" class="section hidden">
+        <div class="container">
+            <h2>Friends</h2>
+            <div class="input-group">
+                <input type="text" id="friend-search" placeholder="Enter RegID">
+                <button onclick="friends.search()" class="btn-primary">Add Friend</button>
+            </div>
+            <div id="friends-list"></div>
+        </div>
+    </section>
+
+    <!-- Leaderboard Section -->
+    <section id="leaderboard-section" class="section hidden">
+        <div class="container">
+            <h2>Global Leaderboard</h2>
+            <div id="leaderboard-list"></div>
+        </div>
+    </section>
+
+    <!-- Admin Login Section -->
+    <section id="admin-login-section" class="section hidden">
+        <div class="admin-login-container">
+            <h2>Admin Access</h2>
+            <p>Enter 6-digit PIN</p>
+            <input type="password" id="admin-pin" maxlength="6">
+            <button onclick="admin.login()" class="btn-primary">Verify</button>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard Section -->
+    <section id="admin-section" class="section hidden">
+        <div class="container">
+            <h2>Admin Dashboard</h2>
+            <div class="admin-stats-grid">
+                <div class="stat-card">
+                    <h3 id="admin-users">0</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            <div id="admin-subjects-list"></div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="challenge-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Send Challenge</h3>
+            <button onclick="modal.close('challenge-modal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
-    <script src="js/data/questions.js"></script>
+    <script src="data/questions.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/regId.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/friends.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/leaderboard.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

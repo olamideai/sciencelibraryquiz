@@ -1,177 +1,44 @@
-/* ==================== RANK THEMES ==================== */
+/* Rank Themes and Animations */
 
-/* NOVICE (0-4 quizzes) - Default Dark */
-.theme-novice {
-    --rank-color: #94a3b8;
-    --rank-glow: none;
-}
-
-/* EXPLORER (5-9 quizzes) - Green Glow */
+/* Explorer - Green Glow */
 .theme-explorer {
     --rank-color: #22c55e;
-    --rank-glow: 0 0 20px rgba(34, 197, 94, 0.3);
 }
-
-.theme-explorer .rank-badge,
-.theme-explorer .rank-display {
-    color: #22c55e;
+.theme-explorer .rank-badge {
     box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-    animation: subtle-pulse 2s infinite;
+    animation: pulse 2s infinite;
 }
 
-@keyframes subtle-pulse {
-    0%, 100% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
-    50% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.6); }
-}
-
-/* SCHOLAR (10-19 quizzes) - Blue Glow + Corner Sparkles */
+/* Scholar - Blue Glow */
 .theme-scholar {
     --rank-color: #3b82f6;
-    --rank-glow: 0 0 30px rgba(59, 130, 246, 0.4);
 }
 
-.theme-scholar .rank-badge,
-.theme-scholar .rank-display {
-    color: #60a5fa;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-    position: relative;
-}
-
-.theme-scholar .rank-badge::before,
-.theme-scholar .rank-badge::after {
-    content: '✨';
-    position: absolute;
-    font-size: 0.8rem;
-    animation: sparkle 1.5s infinite;
-}
-
-.theme-scholar .rank-badge::before {
-    top: -5px;
-    left: -5px;
-}
-
-.theme-scholar .rank-badge::after {
-    bottom: -5px;
-    right: -5px;
-    animation-delay: 0.75s;
-}
-
-@keyframes sparkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 1; transform: scale(1); }
-}
-
-/* EXPERT (20-49 quizzes) - Purple + Animated Borders */
+/* Expert - Purple Glow */
 .theme-expert {
     --rank-color: #a855f7;
-    --rank-glow: 0 0 40px rgba(168, 85, 247, 0.4);
 }
 
-.theme-expert .rank-badge,
-.theme-expert .rank-display {
-    color: #c084fc;
-    border: 2px solid transparent;
-    background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
-                linear-gradient(45deg, #a855f7, #c084fc, #a855f7) border-box;
-    animation: border-rotate 3s linear infinite;
-}
-
-@keyframes border-rotate {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-
-/* MASTER (50-99 quizzes) - Gold Everything */
+/* Master - Gold Shimmer */
 .theme-master {
     --rank-color: #ffd700;
-    --rank-glow: 0 0 50px rgba(255, 215, 0, 0.5);
 }
-
-.theme-master .rank-badge,
-.theme-master .rank-display {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #0f172a;
-    font-weight: bold;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-    animation: gold-shimmer 2s infinite;
-}
-
-.theme-master .stats-card {
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
-}
-
-.theme-master .progress-fill {
-    background: linear-gradient(90deg, #ffd700, #ffed4e);
-}
-
 .theme-master .btn-primary {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
     color: #0f172a;
 }
 
-@keyframes gold-shimmer {
-    0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
-    50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8), 0 0 70px rgba(255, 215, 0, 0.4); }
-}
-
-/* Gold particles on correct answers */
-.theme-master .option.correct {
-    background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(34,197,94,0.2));
-    border-color: #ffd700;
-    animation: gold-particle 0.5s ease;
-}
-
-@keyframes gold-particle {
-    0% { box-shadow: 0 0 0 0 rgba(255,215,0,0.8); }
-    100% { box-shadow: 0 0 0 20px rgba(255,215,0,0); }
-}
-
-/* LEGEND (100+ quizzes) - Rainbow + All Effects */
-.theme-legend {
-    --rank-color: #ff0000;
-    --rank-glow: 0 0 60px rgba(255, 0, 0, 0.4);
-}
-
-/* Rainbow text */
-.theme-legend .rank-badge,
-.theme-legend .rank-display {
-    background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-    background-size: 200% auto;
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    font-weight: bold;
-    animation: rainbow-text 3s linear infinite;
-    position: relative;
-}
-
-@keyframes rainbow-text {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-/* Floating crown */
-.theme-legend .profile-avatar::after,
-.theme-legend .rank-badge::after {
-    content: '👑';
-    position: absolute;
-    top: -15px;
-    right: -10px;
-    font-size: 1.5rem;
-    animation: float 2s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
-}
-
-/* Living background gradient */
+/* Legend - Rainbow */
 .theme-legend body {
     background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #0f172a);
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes gradient-shift {
@@ -180,49 +47,19 @@
     100% { background-position: 0% 50%; }
 }
 
-/* Rainbow shimmer on interactive elements */
-.theme-legend .btn-primary,
-.theme-legend .subject-card:hover,
-.theme-legend .option:hover {
-    position: relative;
-    overflow: hidden;
-}
-
-.theme-legend .btn-primary::before,
-.theme-legend .subject-card:hover::before,
-.theme-legend .option:hover::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-    transform: rotate(45deg);
-    animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-/* Confetti on completion */
 .confetti {
     position: fixed;
     width: 10px;
     height: 10px;
     top: -10px;
-    animation: confetti-fall 3s ease-out forwards;
     z-index: 9999;
+    animation: fall linear forwards;
 }
 
-@keyframes confetti-fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); }
 }
 
-/* Screen flash effect */
 .screen-flash {
     position: fixed;
     top: 0;
@@ -231,8 +68,8 @@
     height: 100%;
     background: white;
     opacity: 0;
-    pointer-events: none;
     z-index: 9998;
+    pointer-events: none;
     animation: flash 0.5s ease-out;
 }
 
@@ -240,31 +77,3 @@
     0% { opacity: 0.3; }
     100% { opacity: 0; }
 }
-
-/* Legend entrance animation */
-.legend-entrance {
-    animation: legend-entrance 1s ease-out;
-}
-
-@keyframes legend-entrance {
-    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-    50% { transform: scale(1.2) rotate(10deg); }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-/* Rainbow border animation */
-.theme-legend .stats-card,
-.theme-legend .question-card,
-.theme-legend .results-card {
-    border: 3px solid transparent;
-    background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
-                linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000) border-box;
-    background-size: 300% 100%;
-    animation: rainbow-border 3s linear infinite;
-}
-
-@keyframes rainbow-border {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 300% 50%; }
-}
-
